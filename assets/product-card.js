@@ -1,534 +1,179 @@
-import { OverflowList } from '@theme/critical';
-import VariantPicker from '@theme/variant-picker';
-import { Component } from '@theme/component';
-import { debounce, isDesktopBreakpoint, mediaQueryLarge, requestYieldCallback } from '@theme/utilities';
-import { ThemeEvents, VariantSelectedEvent, VariantUpdateEvent, SlideshowSelectEvent } from '@theme/events';
-import { morph } from '@theme/morph';
+// @ts-nocheck
+let selectedProduct = null; // Make selectedProduct global
+const cartList = [];
 
-/**
- * A custom element that displays a product card.
- *
- * @typedef {object} Refs
- * @property {HTMLAnchorElement} productCardLink - The product card link element.
- * @property {import('slideshow').Slideshow} [slideshow] - The slideshow component.
- * @property {import('quick-add').QuickAddComponent} [quickAdd] - The quick add component.
- * @property {HTMLElement} [cardGallery] - The card gallery component.
- *
- * @extends {Component<Refs>}
- */
-export class ProductCard extends Component {
-  requiredRefs = ['productCardLink'];
+document.addEventListener("DOMContentLoaded", () => {
 
-  get productPageUrl() {
-    return this.refs.productCardLink.href;
-  }
+    // Open Product Modal
+    document.addEventListener("click", (e) => {
+        const productCardSection = document.querySelector("#product-card-section");
+        if (!productCardSection) return;
 
-  /**
-   * Gets the currently selected variant ID from the product card
-   * @returns {string | null} The variant ID or null if none selected
-   */
-  getSelectedVariantId() {
-    const checkedInput = /** @type {HTMLInputElement | null} */ (
-      this.querySelector('input[type="radio"]:checked[data-variant-id]')
-    );
+        const btn = e.target.closest(".openModalBtn");
+        if (!btn || !productCardSection.contains(btn)) return;
 
-    return checkedInput?.dataset.variantId || null;
-  }
+        e.preventDefault();
 
-  /**
-   * Gets the product card link element
-   * @returns {HTMLAnchorElement | null} The product card link or null
-   */
-  getProductCardLink() {
-    return this.refs.productCardLink || null;
-  }
+        selectedProduct = {
+            title: btn.dataset.title,
+            price: btn.dataset.price,
+            image: btn.dataset.image,
+            colors: btn.dataset.colors ? btn.dataset.colors.split(",") : [],
+            sizes: btn.dataset.sizes ? btn.dataset.sizes.split(",") : [],
+            desc: btn.dataset.desc
+        };
 
-  #fetchProductPageHandler = () => {
-    this.refs.quickAdd?.fetchProductPage(this.productPageUrl);
-  };
+        // Set modal content
+        document.getElementById("modalImage").src = selectedProduct.image;
+        document.getElementById("modalImage").alt = selectedProduct.title;
+        document.getElementById("modalTitle").textContent = selectedProduct.title;
+        document.getElementById("modalPrice").textContent = selectedProduct.price;
+        document.getElementById("modalDesc").innerHTML = selectedProduct.desc;
 
-  /**
-   * Navigates to a URL link. Respects modifier keys for opening in new tab/window.
-   * @param {Event} event - The event that triggered the navigation.
-   * @param {URL} url - The URL to navigate to.
-   */
-  #navigateToURL = (event, url) => {
-    // Check for modifier keys that should open in new tab/window (only for mouse events)
-    const shouldOpenInNewTab =
-      event instanceof MouseEvent && (event.metaKey || event.ctrlKey || event.shiftKey || event.button === 1);
+        // Render Colors
+        const modalColorsContainer = document.getElementById("modalColors");
+        modalColorsContainer.innerHTML = "";
+        if (selectedProduct.colors.length > 0) {
+            selectedProduct.colors.forEach(color => {
+                const colorBtn = document.createElement("button");
+                colorBtn.className = "color-button";
 
-    if (shouldOpenInNewTab) {
-      event.preventDefault();
-      window.open(url.href, '_blank');
-      return;
-    } else {
-      window.location.href = url.href;
-    }
-  };
+                const colorBar = document.createElement("span");
+                colorBar.className = "color-bar";
+                colorBar.style.background = color;
+                if (color.toLowerCase() === "white") {
+                    colorBar.style.border = "1px solid #888";
+                }
+                colorBar.style.width = "4.84px";
+                colorBar.style.height = "100%";
+                colorBar.style.display = "inline-block";
+                colorBar.style.marginRight = "8px";
 
-  connectedCallback() {
-    super.connectedCallback();
+                const colorText = document.createElement("span");
+                colorText.textContent = color;
 
-    const link = this.refs.productCardLink;
-    if (!(link instanceof HTMLAnchorElement)) throw new Error('Product card link not found');
-    this.#handleQuickAdd();
+                colorBtn.appendChild(colorBar);
+                colorBtn.appendChild(colorText);
+                colorBtn.addEventListener("click", () => {
+                    // Remove selection from all buttons
+                    document.querySelectorAll("#modalColors .color-button").forEach(btn => {
+                        btn.classList.remove("selected");
+                    });
 
-    this.addEventListener(ThemeEvents.variantUpdate, this.#handleVariantUpdate);
-    this.addEventListener(ThemeEvents.variantSelected, this.#handleVariantSelected);
-    this.addEventListener(SlideshowSelectEvent.eventName, this.#handleSlideshowSelect);
-    mediaQueryLarge.addEventListener('change', this.#handleQuickAdd);
+                    // Mark this one as selected
+                    colorBtn.classList.add("selected");
 
-    this.addEventListener('click', this.navigateToProduct);
+                    // Store selected color globally
+                    selectedProduct.chosenColor = color;
+                });
 
-    // Preload the next image on the slideshow to avoid white flashes on previewImage
-    setTimeout(() => {
-      if (this.refs.slideshow?.isNested) {
-        this.#preloadNextPreviewImage();
-      }
+                modalColorsContainer.appendChild(colorBtn);
+            });
+        } else {
+            document.getElementById("modalColors").innerHTML = "<p class='text-gray-400 text-sm'>No colors available</p>";
+        }
+
+        // Render Sizes
+        document.getElementById("modalSizes").innerHTML = `<option value="" disabled selected>Choose your size</option>`;
+        if (selectedProduct.sizes.length > 0) {
+            selectedProduct.sizes.forEach(size => {
+                const option = document.createElement("option");
+                option.value = size;
+                option.textContent = size;
+                document.getElementById("modalSizes").appendChild(option);
+            });
+        }
+
+        // Show Modal
+        document.getElementById("popupModal").classList.remove("hidden");
+        document.getElementById("popupModal").classList.add("flex");
+        const scrollBarWidth = window.innerWidth - document.documentElement.clientWidth;
+        document.body.style.overflow = "hidden";
+        document.body.style.paddingRight = scrollBarWidth + "px";
+
+        const arrobtn = e.target.closest(".arrowBox")
+
     });
-  }
 
-  disconnectedCallback() {
-    super.disconnectedCallback();
-    this.removeEventListener('click', this.navigateToProduct);
-  }
-
-  #preloadNextPreviewImage() {
-    const currentSlide = this.refs.slideshow?.slides?.[this.refs.slideshow?.current];
-    currentSlide?.nextElementSibling?.querySelector('img[loading="lazy"]')?.removeAttribute('loading');
-  }
-
-  /**
-   * Handles the quick add event.
-   */
-  #handleQuickAdd = () => {
-    this.removeEventListener('pointerenter', this.#fetchProductPageHandler);
-    this.removeEventListener('focusin', this.#fetchProductPageHandler);
-
-    if (isDesktopBreakpoint()) {
-      this.addEventListener('pointerenter', this.#fetchProductPageHandler);
-      this.addEventListener('focusin', this.#fetchProductPageHandler);
-    }
-  };
-
-  /**
-   * Handles the variant selected event.
-   * @param {VariantSelectedEvent} event - The variant selected event.
-   */
-  #handleVariantSelected = (event) => {
-    if (event.target !== this.variantPicker) {
-      this.variantPicker?.updateSelectedOption(event.detail.resource.id);
-    }
-  };
-
-  /**
-   * Handles the variant update event.
-   * Updates price, checks for unavailable variants, and updates product URL.
-   * @param {VariantUpdateEvent} event - The variant update event.
-   */
-  #handleVariantUpdate = (event) => {
-    // Stop the event from bubbling up to the section, variant updates triggered from product cards are fully handled
-    // by this component and should not affect anything outside the card.
-    event.stopPropagation();
-
-    this.updatePrice(event);
-    this.#isUnavailableVariantSelected(event);
-    this.#updateProductUrl(event);
-    this.refs.quickAdd?.fetchProductPage(this.productPageUrl);
-
-    if (event.target !== this.variantPicker) {
-      this.variantPicker?.updateVariantPicker(event.detail.data.html);
-    }
-
-    this.#updateVariantImages();
-    this.#previousSlideIndex = null;
-
-    // Remove attribute after re-rendering since a variant selection has been made
-    this.removeAttribute('data-no-swatch-selected');
-
-    // Force overflow list to reflow after variant update
-    // This fixes an issue where the overflow counter doesn't update properly in some browsers
-    this.#updateOverflowList();
-  };
-
-  /**
-   * Forces the overflow list to recalculate by dispatching a reflow event.
-   * This ensures the overflow counter displays correctly after variant updates.
-   */
-  #updateOverflowList() {
-    // Find the overflow list in the variant picker
-    const overflowList = this.querySelector('swatches-variant-picker-component overflow-list');
-    const isActiveOverflowList = overflowList?.querySelector('[slot="overflow"]') ? true : false;
-    if (!overflowList || !isActiveOverflowList) return;
-
-    // Use requestAnimationFrame to ensure DOM has been updated
-    requestAnimationFrame(() => {
-      // Dispatch a reflow event to trigger recalculation
-      overflowList.dispatchEvent(
-        new CustomEvent('reflow', {
-          bubbles: true,
-          detail: {},
-        })
-      );
+    document.getElementById("popupModal").addEventListener("click", (e) => {
+        if (e.target === document.getElementById("popupModal")) {
+            document.getElementById("popupModal").classList.add("hidden");
+            document.getElementById("popupModal").classList.remove("flex");
+            document.body.style.overflow = "auto";
+            document.body.style.paddingRight = "0px";
+        }
     });
-  }
 
-  /**
-   * Updates the DOM with a new price.
-   * @param {VariantUpdateEvent} event - The variant update event.
-   */
-  updatePrice(event) {
-    const priceContainer = this.querySelectorAll(`product-price [ref='priceContainer']`)[1];
-    const newPriceElement = event.detail.data.html.querySelector(`product-price [ref='priceContainer']`);
+});
 
-    if (newPriceElement && priceContainer) {
-      morph(priceContainer, newPriceElement);
-    }
-  }
+function closeModal() {
+    document.getElementById("popupModal").classList.add("hidden");
+    document.getElementById("popupModal").classList.remove("flex");
+    document.body.style.overflow = "auto";
+    document.body.style.paddingRight = "0px";
+}
 
-  /**
-   * Updates the product URL based on the variant update event.
-   * @param {VariantUpdateEvent} event - The variant update event.
-   */
-  #updateProductUrl(event) {
-    const anchorElement = event.detail.data.html?.querySelector('product-card a');
-    const featuredMediaUrl = event.detail.data.html
-      ?.querySelector('product-card-link')
-      ?.getAttribute('data-featured-media-url');
+function addToCart() {
+    if (!selectedProduct) return;
+    cartList.push(selectedProduct);
+    renderCart();
+    openCartDrawer();
+    document.getElementById("popupModal").classList.add("hidden");
+    document.body.style.overflow = "auto";
+    document.body.style.paddingRight = "0px";
+}
 
-    // If the product card is inside a product link, update the product link's featured media URL
-    if (featuredMediaUrl && this.closest('product-card-link'))
-      this.closest('product-card-link')?.setAttribute('data-featured-media-url', featuredMediaUrl);
+function closeCart() {
+    document.getElementById("drawer").classList.add("hidden");
 
-    if (anchorElement instanceof HTMLAnchorElement) {
-      // If the href is empty, don't update the product URL eg: unavailable variant
-      if (anchorElement.getAttribute('href')?.trim() === '') return;
+}
 
-      const productUrl = anchorElement.href;
-      const { productCardLink, productTitleLink, cardGalleryLink } = this.refs;
+// Render Cart
+function renderCart() {
+    document.getElementById("cartGrid").innerHTML = "";
+    let subtotal = 0;
+    let selectedColor = document.getElementById("modalColors").value || selectedProduct.colors[0]
+    let selectedSize = document.getElementById("modalSizes").value || selectedProduct.sizes[0]
 
-      productCardLink.href = productUrl;
-      if (cardGalleryLink instanceof HTMLAnchorElement) {
-        cardGalleryLink.href = productUrl;
-      }
-      if (productTitleLink instanceof HTMLAnchorElement) {
-        productTitleLink.href = productUrl;
-      }
-    }
-  }
 
-  /**
-   * Checks if an unavailable variant is selected.
-   * @param {VariantUpdateEvent} event - The variant update event.
-   */
-  #isUnavailableVariantSelected(event) {
-    const allVariants = /** @type {NodeListOf<HTMLInputElement>} */ (
-      event.detail.data.html.querySelectorAll('input:checked')
-    );
-
-    for (const variant of allVariants) {
-      this.#toggleAddToCartButton(variant.dataset.optionAvailable === 'true');
-    }
-  }
-
-  /**
-   * Toggles the add to cart button state.
-   * @param {boolean} enable - Whether to enable or disable the button.
-   */
-  #toggleAddToCartButton(enable) {
-    const addToCartButton = this.querySelector('.add-to-cart__button button');
-
-    if (addToCartButton instanceof HTMLButtonElement) {
-      addToCartButton.disabled = !enable;
-    }
-  }
-
-  /**
-   * Hide the variant images that are not for the selected variant.
-   */
-  #updateVariantImages() {
-    const { slideshow } = this.refs;
-    if (!this.variantPicker?.selectedOption) {
-      return;
-    }
-
-    const selectedImageId = this.variantPicker?.selectedOption.dataset.optionMediaId;
-
-    if (slideshow && selectedImageId) {
-      const { slides = [] } = slideshow.refs;
-
-      for (const slide of slides) {
-        if (slide.getAttribute('variant-image') == null) continue;
-
-        slide.hidden = slide.getAttribute('slide-id') !== selectedImageId;
-      }
-
-      slideshow.select({ id: selectedImageId }, undefined, { animate: false });
-    }
-  }
-
-  /**
-   * Gets all variant inputs.
-   * @returns {NodeListOf<HTMLInputElement>} All variant input elements.
-   */
-  get allVariants() {
-    return this.querySelectorAll('input[data-variant-id]');
-  }
-
-  /**
-   * Gets the variant picker component.
-   * @returns {VariantPicker | null} The variant picker component.
-   */
-  get variantPicker() {
-    return this.querySelector('swatches-variant-picker-component');
-  }
-  /** @type {number | null} */
-  #previousSlideIndex = null;
-
-  /**
-   * Handles the slideshow select event.
-   * @param {SlideshowSelectEvent} event - The slideshow select event.
-   */
-  #handleSlideshowSelect = (event) => {
-    if (event.detail.userInitiated) {
-      this.#previousSlideIndex = event.detail.index;
-    }
-  };
-
-  /**
-   * Previews a variant.
-   * @param {string} id - The id of the variant to preview.
-   */
-  previewVariant(id) {
-    const { slideshow } = this.refs;
-
-    if (!slideshow) return;
-
-    this.resetVariant.cancel();
-    slideshow.select({ id }, undefined, { animate: false });
-  }
-
-  /**
-   * Previews the next image.
-   * @param {PointerEvent} event - The pointer event.
-   */
-  previewImage(event) {
-    if (event.pointerType !== 'mouse') return;
-
-    const { slideshow } = this.refs;
-
-    if (!slideshow) return;
-
-    this.resetVariant.cancel();
-
-    if (this.#previousSlideIndex != null && this.#previousSlideIndex > 0) {
-      slideshow.select(this.#previousSlideIndex, undefined, { animate: false });
-    } else {
-      slideshow.next(undefined, { animate: false });
-      setTimeout(() => this.#preloadNextPreviewImage());
-    }
-  }
-
-  /**
-   * Resets the image to the variant image.
-   * @param {PointerEvent} event - The pointer event.
-   */
-  resetImage(event) {
-    if (event.pointerType !== 'mouse') return;
-
-    const { slideshow } = this.refs;
-
-    if (!this.variantPicker) {
-      if (!slideshow) return;
-      slideshow.previous(undefined, { animate: false });
-    } else {
-      this.#resetVariant();
-    }
-  }
-
-  /**
-   * Resets the image to the variant image.
-   */
-  #resetVariant = () => {
-    const { slideshow } = this.refs;
-
-    if (!slideshow) return;
-
-    // If we have a selected variant, always use its image
-    if (this.variantPicker?.selectedOption) {
-      const id = this.variantPicker.selectedOption.dataset.optionMediaId;
-      if (id) {
-        slideshow.select({ id }, undefined, { animate: false });
+    if (cartList.length === 0) {
+        document.getElementById("cartGrid").innerHTML = `<p class="text-gray-500 text-center py-4">Your cart is empty</p>`;
+        document.getElementById("subtotalPrice").textContent = "€0.00";
         return;
-      }
     }
 
-    // No variant selected - use initial slide if it's valid
-    const initialSlide = slideshow.initialSlide;
-    const slideId = initialSlide?.getAttribute('slide-id');
-    if (initialSlide && slideshow.slides?.includes(initialSlide) && slideId) {
-      slideshow.select({ id: slideId }, undefined, { animate: false });
-      return;
-    }
+    cartList.forEach((product, index) => {
+        const priceValue = parseFloat(product.price.replace(/[^\d.,]/g, "").replace(",", "."));
+        subtotal += priceValue;
 
-    // No valid initial slide or selected variant - go to previous
-    slideshow.previous(undefined, { animate: false });
-  };
+        const cartItem = document.createElement("div");
+        cartItem.className = "flex items-center gap-4 p-3 border rounded-md bg-white shadow-sm";
 
-  /**
-   * Intercepts the click event on the product card anchor, we want
-   * to use this to add an intermediate state to the history.
-   * This intermediate state captures the page we were on so that we
-   * navigate back to the same page when the user navigates back.
-   * In addition to that, it captures the product card anchor so that we
-   * have the specific product card in view.
-   *
-   * A product card can have other interactive elements like variant picker,
-   * so we do not navigate if the click was on one of those elements.
-   *
-   * @param {Event} event
-   */
-  navigateToProduct = (event) => {
-    if (!(event.target instanceof Element)) return;
+        cartItem.innerHTML = `
+                <img src="${product.image}" alt="${product.title}" class="w-20 h-20 rounded-md border object-cover" />
+                <div class="flex-1">
+                    <h3 class="text-gray-900 font-semibold">${product.title}</h3>
+                    <p class="text-gray-500 text-sm">${product.price}</p>
+                    <p class="text-xs text-gray-400">Colors: ${selectedColor}</p>
+                    <p class="text-xs text-gray-400">Sizes: ${selectedSize}</p>
+                </div>
+                <button onclick="removeFromCart(${index})"
+                    class="text-red-500 hover:text-red-700 font-medium transition">Remove</button>
+            `;
 
-    // Don't navigate if this product card is marked as no-navigation (e.g., in theme editor)
-    if (this.hasAttribute('data-no-navigation')) return;
+        cartGrid.appendChild(cartItem);
+    });
 
-    const interactiveElement = event.target.closest('button, input, label, select, [tabindex="1"]');
-
-    // If the click was on an interactive element, do nothing.
-    if (interactiveElement) {
-      return;
-    }
-
-    const link = this.refs.productCardLink;
-    if (!link.href) return;
-    const linkURL = new URL(link.href);
-
-    const productCardAnchor = link.getAttribute('id');
-    if (!productCardAnchor) return;
-
-    const url = new URL(window.location.href);
-    const parent = this.closest('li');
-    url.hash = productCardAnchor;
-    if (parent && parent.dataset.page) {
-      url.searchParams.set('page', parent.dataset.page);
-    }
-
-    if (!window.Shopify.designMode) {
-      requestYieldCallback(() => {
-        history.replaceState({}, '', url.toString());
-      });
-    }
-
-    const targetLink = event.target.closest('a');
-    // Let the native navigation handle the click if it was on a link.
-    if (!targetLink) {
-      this.#navigateToURL(event, linkURL);
-    }
-  };
-
-  /**
-   * Resets the variant.
-   */
-  resetVariant = debounce(this.#resetVariant, 100);
+    document.getElementById("subtotalPrice").textContent = `€${subtotal.toFixed(2)}`;
 }
 
-if (!customElements.get('product-card')) {
-  customElements.define('product-card', ProductCard);
+// Open Cart Drawer
+function openCartDrawer() {
+    document.getElementById("drawer").classList.remove("hidden");
 }
 
-/**
- * A custom element that displays a variant picker with swatches.
- *
- * @typedef {object} SwatchesRefs
- * @property {HTMLElement} overflowList
- *
- * @extends {VariantPicker<SwatchesRefs>}
- */
-class SwatchesVariantPickerComponent extends VariantPicker {
-  connectedCallback() {
-    super.connectedCallback();
-
-    // Cache the parent product card
-    this.parentProductCard = this.closest('product-card');
-
-    // Listen for variant updates to apply pending URL changes
-    this.addEventListener(ThemeEvents.variantUpdate, this.#handleCardVariantUrlUpdate.bind(this));
-  }
-
-  /**
-   * Updates the card URL when a variant is selected.
-   */
-  #handleCardVariantUrlUpdate() {
-    if (this.pendingVariantId && this.parentProductCard instanceof ProductCard) {
-      const currentUrl = new URL(this.parentProductCard.refs.productCardLink.href);
-      currentUrl.searchParams.set('variant', this.pendingVariantId);
-      this.parentProductCard.refs.productCardLink.href = currentUrl.toString();
-      this.pendingVariantId = null;
-    }
-  }
-
-  /**
-   * Override the variantChanged method to handle unavailable swatches with available alternatives.
-   * @param {Event} event - The variant change event.
-   */
-  variantChanged(event) {
-    if (!(event.target instanceof HTMLElement)) return;
-
-    // Check if this is a swatch input
-    const isSwatchInput = event.target instanceof HTMLInputElement && event.target.name?.includes('-swatch');
-    const clickedSwatch = event.target;
-    const availableCount = parseInt(clickedSwatch.dataset.availableCount || '0');
-    const firstAvailableVariantId = clickedSwatch.dataset.firstAvailableOrFirstVariantId;
-
-    // For swatch inputs, check if we need special handling
-    if (isSwatchInput && availableCount > 0 && firstAvailableVariantId) {
-      // If this is an unavailable variant but there are available alternatives
-      // Prevent the default handling
-      event.stopPropagation();
-
-      // Update the selected option visually
-      this.updateSelectedOption(clickedSwatch);
-
-      // Build request URL with the first available variant
-      const productUrl = this.dataset.productUrl?.split('?')[0];
-
-      if (!productUrl) return;
-
-      const url = new URL(productUrl, window.location.origin);
-      url.searchParams.set('variant', firstAvailableVariantId);
-      url.searchParams.set('section_id', 'section-rendering-product-card');
-
-      const requestUrl = url.href;
-
-      // Store the variant ID we want to apply to the URL
-      this.pendingVariantId = firstAvailableVariantId;
-
-      // Use parent's fetch method
-      this.fetchUpdatedSection(requestUrl);
-      return;
-    }
-
-    // For all other cases, use the default behavior
-    super.variantChanged(event);
-  }
-
-  /**
-   * Shows all swatches.
-   * @param {Event} [event] - The event that triggered the show all swatches.
-   */
-  showAllSwatches(event) {
-    event?.preventDefault();
-
-    const { overflowList } = this.refs;
-
-    if (overflowList instanceof OverflowList) {
-      overflowList.showAll();
-    }
-  }
-}
-
-if (!customElements.get('swatches-variant-picker-component')) {
-  customElements.define('swatches-variant-picker-component', SwatchesVariantPickerComponent);
-}
+// Make removeFromCart globally accessible
+window.removeFromCart = (/** @type {number} */ index) => {
+    cartList.splice(index, 1);
+    renderCart();
+};

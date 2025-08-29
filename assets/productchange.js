@@ -1,34 +1,137 @@
+// @ts-nocheck
 document.addEventListener("DOMContentLoaded", () => {
-    const productList = [
-        {
-            title: "Tailored Jacket",
-            price: "980,00€",
-            image: "https://cdn.shopify.com/s/files/1/0873/7842/8199/files/woman-in-the-city_925x_fa6b306e-cdb3-4593-94a7-91ba71d3e059.jpg?v=1715108785",
-            colors: ["Blue", "Black"],
-            sizes: ["S", "M", "L", "XL"]
-        },
-        {
-            title: "Sneakers",
-            price: "250,00€",
-            image: "https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-02.jpg",
-            colors: ["White", "Gray", "Yellow"],
-            sizes: ["7", "8", "9", "10"]
-        },
-        {
-            title: "Classic Denim Jacket",
-            price: "650,00€",
-            image: "https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-03.jpg",
-            colors: ["Blue", "Light Blue", "Black"],
-            sizes: ["S", "M", "L"]
-        },
-        {
-            title: "Beige Trench Coat",
-            price: "1,200,00€",
-            image: "https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-04.jpg",
-            colors: ["Beige", "Brown", "Black"],
-            sizes: ["M", "L", "XL"]
+    // const productList = [
+    //     {
+    //         title: "Tailored Jacket",
+    //         price: "980,00€",
+    //         image: "https://cdn.shopify.com/s/files/1/0873/7842/8199/files/woman-in-the-city_925x_fa6b306e-cdb3-4593-94a7-91ba71d3e059.jpg?v=1715108785",
+    //         colors: ["Blue", "Black"],
+    //         sizes: ["S", "M", "L", "XL"]
+    //     },
+    //     {
+    //         title: "Sneakers",
+    //         price: "250,00€",
+    //         image: "https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-02.jpg",
+    //         colors: ["White", "Gray", "Yellow"],
+    //         sizes: ["7", "8", "9", "10"]
+    //     },
+    //     {
+    //         title: "Classic Denim Jacket",
+    //         price: "650,00€",
+    //         image: "https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-03.jpg",
+    //         colors: ["Blue", "Light Blue", "Black"],
+    //         sizes: ["S", "M", "L"]
+    //     },
+    //     {
+    //         title: "Beige Trench Coat",
+    //         price: "1,200,00€",
+    //         image: "https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-04.jpg",
+    //         colors: ["Beige", "Brown", "Black"],
+    //         sizes: ["M", "L", "XL"]
+    //     },
+    //     {
+    //         title: "Classic Denim Jacket",
+    //         price: "650,00€",
+    //         image: "https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-03.jpg",
+    //         colors: ["Blue", "Light Blue", "Black"],
+    //         sizes: ["S", "M", "L"]
+    //     },
+    //     {
+    //         title: "Beige Trench Coat",
+    //         price: "1,200,00€",
+    //         image: "https://tailwindcss.com/plus-assets/img/ecommerce-images/product-page-01-related-product-04.jpg",
+    //         colors: ["Beige", "Brown", "Black"],
+    //         sizes: ["M", "L", "XL"]
+    //     }
+    // ];
+    // const productsGrid = document.getElementById("productsGrid");
+
+    // productList.forEach((product, index) => {
+    //     const productCard = document.createElement("div");
+
+    //     // Make cards equal height using flex layout
+    //     productCard.className =
+    //         "group relative cursor-pointer border rounded-md shadow hover:shadow-lg transition flex flex-col";
+
+    //     productCard.innerHTML = `
+    //     <div class="relative">
+    //         <img src="${product.image}" alt="${product.title}" class="w-full h-48 object-cover rounded-t-md" />
+    //         <!-- Plus Icon Button -->
+    //         <button data-index="${index}" class="openModalBtn absolute top-2 right-2 bg-white text-black rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:bg-gray-200 transition">
+    //             +
+    //         </button>
+    //     </div>
+    //     <div class="p-3 flex flex-col flex-grow justify-between">
+    //         <div>
+    //             <h3 class="text-sm font-semibold text-gray-700 leading-tight min-h-[40px]">
+    //                 ${product.title}
+    //             </h3>
+    //             <p class="text-gray-500 text-sm">${product.price}</p>
+    //         </div>
+    //     </div>
+    // `;
+    //     productsGrid.appendChild(productCard);
+    // });
+
+
+    // Render Products Dynamically
+    const productsGrid = document.getElementById("productsGrid");
+    const productsDataEl = document.getElementById("products-data");
+    const productList = productsDataEl ? JSON.parse(productsDataEl.textContent) : [];
+    console.log(productList);
+
+
+    // Parse products from Liquid JSON
+    if (productsDataEl) {
+        try {
+            productList = JSON.parse(productsDataEl.textContent);
+        } catch (e) {
+            console.error("Failed to parse product data:", e);
+            productList = [];
         }
-    ];
+    }
+
+    // If no products found, show a message
+    if (!productList || productList.length === 0) {
+        productsGrid.innerHTML = `
+            <p class="text-gray-500 text-center col-span-full">
+                No products found in this collection.
+            </p>
+        `;
+        return;
+    }
+
+    // Clear grid before rendering
+    productsGrid.innerHTML = "";
+
+    // Render Products Dynamically
+    productList.forEach((product, index) => {
+        const productCard = document.createElement("div");
+
+        // Make cards equal height using flex layout
+        productCard.className =
+            "group relative cursor-pointer border rounded-md shadow hover:shadow-lg transition flex flex-col bg-white";
+
+        productCard.innerHTML = `
+            <div class="relative">
+                <img src="${product.image}" alt="${product.title}" class="w-full h-48 object-cover rounded-t-md" />
+                <!-- Plus Icon Button -->
+                <button data-index="${index}" class="openModalBtn absolute top-2 right-2 bg-white text-black rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:bg-gray-200 transition">
+                    +
+                </button>
+            </div>
+            <div class="p-3 flex flex-col flex-grow justify-between">
+                <div>
+                    <h3 class="text-sm font-semibold text-gray-700 leading-tight min-h-[40px]">
+                        ${product.title}
+                    </h3>
+                    <p class="text-gray-500 text-sm">${product.price}</p>
+                </div>
+            </div>
+        `;
+
+        productsGrid.appendChild(productCard);
+    });
 
     const modal = document.getElementById("popupModal");
     const modalTitle = document.getElementById("modalTitle");
@@ -42,31 +145,14 @@ document.addEventListener("DOMContentLoaded", () => {
     const cartGrid = document.getElementById("cartGrid");
     const subtotalEl = document.getElementById("subtotalPrice");
 
+    /**
+     * @type {{ title: string; price: string; image: string; colors: string[]; sizes: string[]; } | null | undefined}
+     */
     let selectedProduct = null;
+    /**
+     * @type {any[]}
+     */
     const cartList = [];
-
-    const productsGrid = document.getElementById("productsGrid");
-
-    // Render Products Dynamically
-    productList.forEach((product, index) => {
-        const productCard = document.createElement("div");
-        productCard.className =
-            "group relative cursor-pointer border rounded-md shadow hover:shadow-lg transition";
-        productCard.innerHTML = `
-        <div class="relative">
-    <img src="${product.image}" alt="${product.title}" class="w-full h-48 object-cover rounded-t-md" />
-    <!-- Plus Icon Button -->
-    <button data-index="${index}" class="openModalBtn absolute top-2 right-2 bg-white text-black rounded-full w-8 h-8 flex items-center justify-center shadow-md hover:bg-gray-200 transition">
-        +
-    </button>
-</div>
-<div class="p-3">
-    <h3 class="text-sm font-semibold text-gray-700">${product.title}</h3>
-    <p class="text-gray-500 text-sm">${product.price}</p>
-</div>
-        `;
-        productsGrid.appendChild(productCard);
-    });
 
     // Open Product Modal
     document.addEventListener("click", (e) => {
@@ -79,12 +165,41 @@ document.addEventListener("DOMContentLoaded", () => {
             modalImage.src = selectedProduct.image;
 
             // Render Colors
+            const colorMap = {
+                "blue": "#1e3a8a",
+                "black": "#000",
+                "white": "#fff",
+                "gray": "#6b7280",
+                "yellow": "#facc15",
+                "light blue": "#60a5fa",
+                "beige": "#f5f5dc",
+                "brown": "#8b5c2a"
+                // Add more as needed
+            };
             modalColors.innerHTML = "";
             selectedProduct.colors.forEach(color => {
                 const colorBtn = document.createElement("button");
                 colorBtn.className =
-                    "border border-gray-300 rounded-md px-4 py-2 text-sm font-medium hover:border-black focus:ring-2 focus:ring-black transition";
-                colorBtn.innerText = color;
+                    "flex items-center border border-gray-300 text-sm font-medium hover:border-black focus:ring-2 focus:ring-black transition relative w-full";
+                colorBtn.style.position = "relative";
+                colorBtn.style.overflow = "hidden";
+                colorBtn.style.height = "40px"; // Optional: set a fixed height for consistency
+
+                // Create the colored vertical bar
+                const colorBar = document.createElement("span");
+                colorBar.className = "color-bar";
+                colorBar.style.background = colorMap[color.toLowerCase()] || color.toLowerCase();
+                // Add a border for white for visibility
+                if (color.toLowerCase() === "white" || colorMap[color.toLowerCase()] === "#fff") {
+                    colorBar.style.border = "1px solid #888";
+                }
+
+                const colorText = document.createElement("span");
+                colorText.textContent = color;
+                colorText.style.paddingRight = "12px";
+
+                colorBtn.appendChild(colorBar);
+                colorBtn.appendChild(colorText);
                 modalColors.appendChild(colorBtn);
             });
 
@@ -171,7 +286,7 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 
     // Make removeFromCart globally accessible
-    window.removeFromCart = (index) => {
+    window.removeFromCart = (/** @type {number} */ index) => {
         cartList.splice(index, 1);
         renderCart();
     };

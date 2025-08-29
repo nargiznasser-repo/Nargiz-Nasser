@@ -1047,7 +1047,7 @@ ul[product-grid-view='zoom-out'] .product-grid__card .card-gallery {
 
 [product-grid-view='zoom-out']
   .card-gallery
-  > :is(quick-add-component, .product-badges, slideshow-component > slideshow-controls) {
+  > :is(quick-add-component, slideshow-component > slideshow-controls) {
   display: none;
 }
 
