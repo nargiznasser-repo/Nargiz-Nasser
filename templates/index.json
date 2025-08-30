@@ -23,7 +23,7 @@
           "type": "textDesc",
           "name": "t:names.description",
           "settings": {
-            "textDesc": "<p>Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season.</p>"
+            "textDesc": "<p>Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season!!!</p>"
           }
         },
         "text_Title": {
@@ -70,7 +70,8 @@
         "button_H9gGift",
         "button_H9gShop",
         "text_Footer"
-      ]
+      ],
+      "settings": {}
     },
     "product_list_rLMWmg": {
       "type": "product-list",
@@ -114,6 +115,9 @@
               "name": "t:names.collection_title",
               "settings": {
                 "text": "<h3>{{ closest.collection.title }}</h3>",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
                 "type_preset": "rte",
                 "font": "var(--font-body--family)",
                 "font_size": "",
@@ -121,14 +125,16 @@
                 "letter_spacing": "normal",
                 "case": "none",
                 "wrap": "pretty",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
                 "padding-block-start": 0,
                 "padding-block-end": 0,
                 "padding-inline-start": 0,
                 "padding-inline-end": 0
-              }
+              },
+              "blocks": {}
             }
           },
           "block_order": [
@@ -151,14 +157,9 @@
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
-          "blocks": {},
-          "block_order": []
+          "blocks": {}
         }
       },
-      "block_order": [
-        "static-header",
-        "static-product-card"
-      ],
       "name": "t:names.products_grid",
       "settings": {
         "collection": "frontpage",
