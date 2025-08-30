@@ -1,5 +1,3 @@
-
-
 /* blue color for item pop-up background: #0D499F;
 width: 5.807142734527588;
 height: 40.441322326660156;
@@ -32,8 +30,7 @@ body {
 .no-gutters {
   margin-right: 0;
   margin-left: 0;
-  margin-bottom: 0
-  ;
+  margin-bottom: 0;
 }
 
 /* Left text column spacing */
@@ -45,8 +42,8 @@ body {
 
 .bg-right {
   width: 100%;
-  height: 100%;      
-  object-fit: cover; 
+  height: 100%;
+  object-fit: cover;
   display: block;
 }
 
@@ -58,25 +55,28 @@ body {
 .cover-body .col-lg-6,
 .cover-body .col-md-12 {
   padding: 0 !important;
- 
+
 }
 
 .cover-body .right-image img {
   width: 100%;
   height: 100%;
   display: block;
-  object-fit: cover; /* Ensures full coverage */
+  object-fit: cover;
+  /* Ensures full coverage */
 }
 
 
 .cover-top {
   width: 100%;
 }
+
 .bg-top {
   width: 100%;
   height: auto;
   display: block;
 }
+
 .title {
   font-size: 70px;
   font-weight: 500;
@@ -86,6 +86,7 @@ body {
   vertical-align: middle;
   font-style: medium;
 }
+
 .subtitle {
   font-size: 20px;
   color: #333;
@@ -111,7 +112,8 @@ body {
   cursor: pointer;
   transition: color 300ms ease-out;
   position: relative;
-  overflow: hidden; /* Required for animation */
+  overflow: hidden;
+  /* Required for animation */
   border-radius: 3px;
   display: inline-flex;
   align-items: center;
@@ -120,7 +122,7 @@ body {
 }
 
 .shop-now-btn .arrow-icon,
-.choose-gift-btn .arrow-icon{
+.choose-gift-btn .arrow-icon {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -141,12 +143,13 @@ body {
 }
 
 .shop-now-btn:hover {
-  background-position: -100% 0; /* Moves gradient left → right */
+  background-position: -100% 0;
+  /* Moves gradient left → right */
   color: #333;
 }
 
 .shop-now-btn:hover svg line,
-.shop-now-btn:hover svg path{
+.shop-now-btn:hover svg path {
   stroke: #333;
 }
 
@@ -163,13 +166,15 @@ body {
 }
 
 .choose-gift-btn:hover {
-  background-position: -100% 0; /* Moves gradient left → right */
+  background-position: -100% 0;
+  /* Moves gradient left → right */
   color: #fff;
 }
 
 .choose-gift-btn:hover svg line,
 .choose-gift-btn:hover svg path {
-  stroke: #fff; /* Arrow becomes white on hover */
+  stroke: #fff;
+  /* Arrow becomes white on hover */
 }
 
 /* Tablet Responsiveness */
@@ -179,6 +184,7 @@ body {
     font-size: 15px;
     padding: 12px 24px;
   }
+
   .choose-gift-btn {
     width: 180px;
     height: 40px;
@@ -193,16 +199,15 @@ body {
     max-width: 300px;
     font-size: 14px;
     padding: 12px 20px;
-    display: block;
     margin: 0 auto;
   }
+
   .choose-gift-btn {
-    width: 100%;
-    max-width: 300px;
-    height: 38px;
-    font-size: 14px;
-    display: block;
-    margin: 0 auto;
+    display: none !important;
+  }
+
+  .bg-right {
+    display: none !important;
   }
 }
 
@@ -215,37 +220,140 @@ body {
   color: #222;
   border-top: 1px solid #eaeaea;
   background-color: #f5f5f5;
-  margin : 0
+  margin: 0
 }
 
 
-.color-bar {
-  display: inline-block;
-  width: 10px;
+/* Modal Content Sizing */
+.modal-content {
+  max-width: 350px;
+  max-height: 500px;
+  overflow: hidden;
+  border-radius: 12px;
+  transition: all 0.3s ease-in-out;
+  padding: 16px;
+  box-sizing: border-box;
+  font-family: Jost;
+}
+
+
+.modal-content .gap-4 {
+  min-height: 180px;
+  padding-top: 20px;
+}
+
+#modalTitle {
+  margin-bottom: 2px;
+  font-weight: 300;
+  font-style: Light;
+  font-size: 16px;
+  line-height: 120%;
+  letter-spacing: 0px;
+  vertical-align: middle;
+
+}
+
+#modalPrice {
+  font-family: Lustria;
+  font-weight: 400;
+  font-size: 16px;
+  line-height: 120%;
+  vertical-align: middle;
+  margin-top: 0;
+}
+
+#modalDesc {
+  margin-top: 2px;
+  font-weight: 300;
+  font-style: Light;
+  font-size: 12px;
+  line-height: 110.00000000000001%;
+  letter-spacing: -1%;
+
+}
+
+#modalSizes {
+  padding: 4px 6px;
+  height: 36px;
+  width: 100%;
+  box-sizing: border-box;
+  border-radius: 0;
+}
+
+#modalSizes+span {
   height: 100%;
-  border-radius: 2px;
-  margin-right: 8px;
-  margin-left: -4px; /* pulls bar flush to the left edge */
-  flex-shrink: 0;
-  align-self: stretch;
-  border: 1px solid #ccc;
+}
+
+#modalSizesArrow {
+  transition: transform 0.3s ease-in-out;
+  transform-origin: center;
+}
+
+.relative.w-full {
+  position: relative;
+}
+
+#addToCartBtn {
+  font-size: 12px;
+  padding: 6px 8px;
+}
+
+@media (max-width: 350px) {
+  .modal-content {
+    width: 95%;
+    height: auto;
+    max-height: 85vh;
+  }
+}
+
+#modalColors {
+  display: flex;
+  flex-direction: row;
+  gap: 4px;
+  width: 100%;
+  min-height: 45px;
+  flex-wrap: wrap;
+}
+
+.colortext h3 {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 130%;
 }
 
 .color-button {
-  position: relative;
+  flex: 1 1 0;
+  /* grow and shrink equally */
+  height: auto;
+  padding: 0;
   display: flex;
   align-items: center;
   justify-content: flex-start;
   border: 1px solid #ccc;
-  font-size: 14px;
-  font-weight: 500;
-  cursor: pointer;
-  width: 271px;
-  height: 40.44px;
   background: white;
   color: black;
   transition: background 300ms ease-out, color 300ms ease-out;
+  box-sizing: border-box;
 }
+
+.colorbuttonText {
+  font-weight: 400;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: -2%;
+  text-transform: capitalize;
+}
+
+/* Color bar inside button */
+.color-bar {
+  width: 4.84px;
+  height: 100%;
+  margin-right: 8px;
+  border-radius: 2px;
+  border: 1px solid #ccc;
+  flex-shrink: 0;
+}
+
 
 .color-button.selected {
   background: linear-gradient(to right, #fff 0%, #fff 50%, #000 50%, #000 100%);
@@ -253,4 +361,84 @@ body {
   background-position: right bottom;
   color: white;
   border: none;
+}
+
+.custom-header {
+  display: flex;
+  justify-content: space-between; /* Space between title & button */
+  align-items: center;
+  padding: 80px 40px 40px 40px;
+  width: 100%;
+}
+
+.custom-header h3 {
+  margin: 0;
+  font-family: Lustria;
+  font-weight: 400;
+  font-size: 36px;
+  line-height: 120%;
+}
+
+.view-cart-btn {
+  background: transparent;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.view-cart-btn .cart-icon {
+  width: 34px;
+  height: 34px;
+  object-fit: contain;
+  transition: transform 0.2s ease-in-out;
+}
+
+.view-cart-btn:hover .cart-icon {
+  transform: scale(1.1);
+}
+
+
+/* Tablet (768px and below) */
+@media (max-width: 768px) {
+  .custom-header {
+    padding: 60px 30px 30px 30px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .header-right {
+    margin-top: 12px;
+  }
+}
+
+/* Mobile (480px and below) */
+@media (max-width: 480px) {
+  .custom-header {
+    padding: 40px 20px 20px 20px;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .header-right {
+    margin-top: 10px;
+  }
+}
+
+/* Pulsing animation for the hotspot button */
+@keyframes pulseEffect {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(1);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.6);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.15);
+    box-shadow: 0 0 20px 8px rgba(255, 255, 255, 0.3);
+  }
+}
+
+.pulse-animation {
+  animation: pulseEffect 1.8s ease-in-out infinite;
 }

@@ -34,6 +34,7 @@ document.addEventListener("DOMContentLoaded", () => {
         const modalColorsContainer = document.getElementById("modalColors");
         modalColorsContainer.innerHTML = "";
         if (selectedProduct.colors.length > 0) {
+            const numColors = selectedProduct.colors.length
             selectedProduct.colors.forEach(color => {
                 const colorBtn = document.createElement("button");
                 colorBtn.className = "color-button";
@@ -44,16 +45,18 @@ document.addEventListener("DOMContentLoaded", () => {
                 if (color.toLowerCase() === "white") {
                     colorBar.style.border = "1px solid #888";
                 }
-                colorBar.style.width = "4.84px";
+                colorBar.style.width = "7.84px";
                 colorBar.style.height = "100%";
                 colorBar.style.display = "inline-block";
                 colorBar.style.marginRight = "8px";
 
                 const colorText = document.createElement("span");
                 colorText.textContent = color;
+                colorText.class = "colorbuttonText";
 
                 colorBtn.appendChild(colorBar);
                 colorBtn.appendChild(colorText);
+                colorBtn.style.flex = `1 1 ${100 / numColors}%`;
                 colorBtn.addEventListener("click", () => {
                     // Remove selection from all buttons
                     document.querySelectorAll("#modalColors .color-button").forEach(btn => {
@@ -74,15 +77,51 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         // Render Sizes
-        document.getElementById("modalSizes").innerHTML = `<option value="" disabled selected>Choose your size</option>`;
+        const modalSizes = document.getElementById("modalSizes");
+        modalSizes.innerHTML = "";
+
+        // Add the placeholder as a disabled option
+        const placeholder = document.createElement("option");
+        placeholder.textContent = "Choose your size";
+        placeholder.disabled = true;
+        placeholder.selected = true;
+        modalSizes.appendChild(placeholder);
+
         if (selectedProduct.sizes.length > 0) {
             selectedProduct.sizes.forEach(size => {
                 const option = document.createElement("option");
                 option.value = size;
                 option.textContent = size;
+                option.className = "colorbuttonText"
+                option.style.textAlign = "center";
                 document.getElementById("modalSizes").appendChild(option);
             });
         }
+
+        modalSizes.addEventListener("focus", () => {
+            if (modalSizes.options[0].disabled) {
+                modalSizes.options[0].style.display = "none";
+            }
+        });
+
+        modalSizes.addEventListener("blur", () => {
+            if (modalSizes.selectedIndex === -1 || modalSizes.selectedIndex === 0) {
+                modalSizes.options[0].style.display = "block";
+            }
+        });
+
+        const modalArrow = document.getElementById("modalSizesArrow");
+        let isOpen = false;
+        modalSizes.addEventListener("mousedown", () => {
+            isOpen = !isOpen;
+            modalArrow.style.transform = isOpen
+                ? "translateY(-50%) rotate(180deg)" // open: arrow up
+                : "translateY(-50%) rotate(0deg)";  // closed: arrow down
+        });
+        modalSizes.addEventListener("change", () => {
+            isOpen = false;
+            modalArrow.style.transform = "translateY(-50%) rotate(0deg)";
+        });
 
         // Show Modal
         document.getElementById("popupModal").classList.remove("hidden");

@@ -1,6 +1,6 @@
 <head>
  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-  
+  <link rel="stylesheet" href="{{ 'styles.css' | asset_url }}">
 </head>
 
 <body class="bg-white">
@@ -14,9 +14,9 @@
       data-image="{{ product.featured_image | image_url: width:433, height:444 }}"
       data-colors="{{ product.options_with_values | where: 'name', 'Color' | map: 'values' | join: ',' }}"
       data-sizes="{{ product.options_with_values | where: 'name', 'Size' | map: 'values' | join: ',' }}"
-      data-desc="{{ product.description }}"
-      class="openModalBtn absolute top-2 right-2 bg-white text-black rounded-full w-4 h-4 flex items-center justify-center 
-      shadow-md hover:bg-gray-200 transition">
+      data-desc="{{ product.description }}" style="top: 50%; left: 50%;transform: translate(-50%, -50%);" 
+      class="openModalBtn absolute bg-white text-black rounded-full w-7 h-7 flex items-center justify-center shadow-md 
+           transition-all duration-300 ease-in-out transform opacity-90 hover:opacity-100 hover:scale-125 pulse-animation">
       <svg width="20" height="20" fill="none" viewBox="0 0 20 20">
         <path d="M10 6v8M6 10h8" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
       </svg>

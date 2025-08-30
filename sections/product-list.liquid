@@ -6,14 +6,28 @@
 <link rel="stylesheet" href="{{ 'styles.css' | asset_url }}">
 <script src="{{ 'product-card.js' | asset_url }}" defer></script>
 
+<div class="custom-header">
+  <div class="header-left">
+    {%- content_for 'block', type: '_product-list-content', id: 'static-header' -%}
+  </div>
+
+  <div class="header-right">
+   <button class="view-cart-btn" type="button" onclick="openCartDrawer()">
+    <img src="{{ 'icon-cart.svg' | asset_url }}" 
+        alt="Cart" 
+        class="cart-icon"
+        width="24"
+        height="24">
+   </button>
+  </div>
+</div>
+
 <div
   id="product-card-section"
   class="section section--{{ section.settings.section_width }} color-{{ section.settings.color_scheme }}"
 >
-  <div
-    class="product-list-grid"
-    style="display: grid; grid-template-columns: repeat({{ section.settings.columns }}, 1fr); gap: {{ section.settings.columns_gap }}px;"
-  >
+  <div class="product-list-grid"
+    style="display: grid; grid-template-columns: repeat({{ section.settings.columns }}, 1fr); gap: {{ section.settings.columns_gap }}px;">
     {% for i in (1..max_items) %}
       {% assign index = forloop.index0 %}
       {% assign product = section_products[index] %}
@@ -29,8 +43,9 @@
 <!-- Product Details Modal -->
 <div
   id="popupModal"
-  class="fixed inset-0 bg-black/30 backdrop-blur-md hidden items-center justify-center z-50 transition-all w-200 h-447">
-  <div class="bg-white shadow-xl p-6 relative">
+  class="fixed inset-0 bg-black/30 backdrop-blur-md hidden items-center justify-center z-50 transition-all"
+>
+  <div class="bg-white shadow-xl p-6 relative modal-content">
     <button
       id="closeModalBtn"
       class="absolute top-3 right-3 text-gray-500 hover:text-gray-800 text-xl"
@@ -39,34 +54,33 @@
       ✕
     </button>
     <div class="flex gap-4">
-      <div class="flex-shrink-0 w-32 h-32">
+      <div class="w-50 h-auto">
         <img id="modalImage" src="" alt="" class="w-full h-full object-cover" width="128" height="128">
       </div>
       <div class="flex-1">
-        <h2 id="modalTitle" class="text-lg font-semibold text-gray-800"></h2>
-        <p id="modalPrice" class="text-gray-700 text-base mt-1"></p>
-        <div id="modalDesc" class="text-gray-500 text-sm mt-2 leading-5"></div>
+        <h2 id="modalTitle"></h2>
+        <p id="modalPrice" class="text-base mt-1"></p>
+        <div id="modalDesc" class="mt-2 leading-5"></div>
       </div>
     </div>
-    <div class="mt-5">
-      <h3 class="text-sm font-semibold text-gray-700 mb-2">Color</h3>
+    <div class="colortext mt-3 mb-3">
+      <h3 class="mb-2">Color</h3>
       <div id="modalColors" class="flex gap-0"></div>
     </div>
-    <div class="mt-5">
-      <h3 class="text-sm font-semibold text-gray-700 mb-2">Size</h3>
+    <div class="colortext mt-1">
+      <h3 class="mb-2">Size</h3>
       <div class="relative w-full">
         <select
           id="modalSizes"
-          class="appearance-none border border-black px-3 py-3 w-full text-base font-medium text-gray-900 bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-black focus:border-black pr-12"
+          class="appearance-none border border-black px-3 w-full bg-white cursor-pointer focus:outline-none focus:ring-2 focus:ring-black focus:border-black pr-12"
         >
           <option value="" disabled selected>Choose your size</option>
         </select>
 
         <!-- Vertical Divider -->
-        <span class="absolute top-1/2 right-10 transform -translate-y-1/2 h-full w-px bg-black pointer-events-none"></span>
+        <span class="absolute top-0 right-10 h-full w-px bg-black pointer-events-none"></span>
 
-        <!-- Custom Arrow -->
-        <svg
+        <svg id="modalSizesArrow"
           class="pointer-events-none absolute top-1/2 right-3 w-4 h-4 text-black transform -translate-y-1/2"
           fill="none"
           stroke="currentColor"
@@ -94,10 +108,8 @@
 </div>
 
 <!-- Cart Drawer -->
-<div
-  id="drawer"
-  class="fixed top-0 right-0 w-96 h-full bg-white shadow-2xl z-50 hidden flex flex-col"
->
+<div  id="drawer"
+  class="fixed top-0 right-0 w-96 h-full bg-white shadow-2xl z-50 hidden flex flex-col">
   <div class="flex items-center justify-between px-6 py-4 border-b">
     <h2 class="text-lg font-bold text-gray-900">Shopping Cart</h2>
     <button id="closeDrawerBtn" onclick="closeCart()" class="p-2 rounded-full hover:bg-gray-100 transition">✕</button>
@@ -172,6 +184,155 @@
       "id": "color_scheme",
       "label": "Color scheme",
       "default": "scheme-1"
+    }
+  ],
+  "presets": [
+    {
+      "name": "t:names.products_grid",
+      "category": "t:categories.products",
+      "blocks": {
+        "static-header": {
+          "type": "_product-list-content",
+          "name": "t:names.header",
+          "static": true,
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "space-between",
+            "vertical_alignment": "flex-end",
+            "align_baseline": true,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "product_list_text": {
+              "type": "_product-list-text",
+              "name": "t:names.collection_title",
+              "settings": {
+                "text": "<h3>{{ closest.collection.title }}</h3>",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            }
+          },
+          "block_order": ["product_list_text"]
+        },
+        "static-product-card": {
+          "type": "_product-card",
+          "name": "t:names.product_card",
+          "static": true,
+          "settings": {
+            "product_card_gap": 4,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "product-card-gallery": {
+              "type": "_product-card-gallery",
+              "name": "t:names.product_card_media",
+              "settings": {
+                "image_ratio": "adapt",
+                "border": "none",
+                "border_width": 1,
+                "border_opacity": 100,
+                "border_radius": 0,
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            },
+            "product_title": {
+              "type": "product-title",
+              "name": "t:names.product_title",
+              "settings": {
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "color": "var(--color-foreground)",
+                "background": false,
+                "background_color": "#00000026",
+                "corner_radius": 0,
+                "padding-block-start": 4,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            },
+            "price": {
+              "type": "price",
+              "name": "t:names.product_price",
+              "settings": {
+                "show_sale_price_first": true,
+                "show_installments": false,
+                "show_tax_info": false,
+                "type_preset": "h6",
+                "width": "100%",
+                "alignment": "left",
+                "font": "var(--font-body--family)",
+                "font_size": "1rem",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "color": "var(--color-foreground)",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            }
+          },
+          "block_order": ["product-card-gallery", "product_title", "price"]
+        }
+      },
+      "block_order": []
     }
   ]
 }

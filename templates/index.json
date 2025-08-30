@@ -1,8 +1,46 @@
 {
   "sections": {
-    "main": {
+    "banner_ghr": {
       "type": "banner",
-      "settings": {}
+      "blocks": {
+        "text_Heading": {
+          "type": "textHeading",
+          "name": "t:names.heading"
+        },
+         "text_Description": {
+          "type": "textDesc",
+          "name": "t:names.description"
+        },
+         "text_Title": {
+          "type": "textTitle",
+          "name": "t:names.title"
+        },
+         "text_SubTitle": {
+          "type": "textSubTitle",
+          "name": "t:names.subtitle"
+        },
+        "button_H9gGift": {
+          "type": "buttonGift",
+          "name": "t:names.button"
+        },
+        "button_H9gShop": {
+          "type": "buttonShop",
+          "name": "t:names.button"
+        },
+        "text_Footer" : {
+          "type": "textFooter",
+          "name": "t:names.footer"
+        }
+      },
+      "block_order": [
+        "text_Heading",
+        "text_Description",
+        "text_Title",
+        "text_SubTitle",
+        "button_H9gGift",
+        "button_H9gShop",
+        "text_Footer"
+      ],
     },
     "product_list_rLMWmg": {
       "type": "product-list",
@@ -66,25 +104,10 @@
                 "padding-inline-end": 0
               },
               "blocks": {}
-            },
-            "product_list_button_4Vh7qF": {
-              "type": "_product-list-button",
-              "name": "t:names.product_list_button",
-              "settings": {
-                "label": "View all",
-                "open_in_new_tab": false,
-                "style_class": "link",
-                "width": "fit-content",
-                "custom_width": 100,
-                "width_mobile": "fit-content",
-                "custom_width_mobile": 100
-              },
-              "blocks": {}
             }
           },
           "block_order": [
-            "product_list_text_iJt3jP",
-            "product_list_button_4Vh7qF"
+            "product_list_text_iJt3jP"
           ]
         }
       },
@@ -111,7 +134,7 @@
     }
   },
   "order": [
-    "main",
+    "banner_ghr",
     "product_list_rLMWmg"
   ]
 }
