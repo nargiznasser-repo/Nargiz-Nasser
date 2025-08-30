@@ -14,31 +14,52 @@
       "blocks": {
         "text_Heading": {
           "type": "textHeading",
-          "name": "t:names.heading"
+          "name": "t:names.heading",
+          "settings": {
+            "textHeading": "<p>The Gift Guide</p>"
+          }
         },
-         "text_Description": {
+        "text_Description": {
           "type": "textDesc",
-          "name": "t:names.description"
+          "name": "t:names.description",
+          "settings": {
+            "textDesc": "<p>Discover Joy: Your Ultimate Holiday Gift Destination. Explore our curated selection and find the perfect gifts to delight your loved ones this holiday season.</p>"
+          }
         },
-         "text_Title": {
+        "text_Title": {
           "type": "textTitle",
-          "name": "t:names.title"
+          "name": "t:names.title",
+          "settings": {
+            "textTitle": "<p>TISSO VISON</p>"
+          }
         },
-         "text_SubTitle": {
+        "text_SubTitle": {
           "type": "textSubTitle",
-          "name": "t:names.subtitle"
+          "name": "t:names.subtitle",
+          "settings": {
+            "textSubTitle": "<p>Find the ideal gift for your loved ones.</p>"
+          }
         },
         "button_H9gGift": {
           "type": "buttonGift",
-          "name": "t:names.button"
+          "name": "t:names.button",
+          "settings": {
+            "label": "Choose Gift"
+          }
         },
         "button_H9gShop": {
           "type": "buttonShop",
-          "name": "t:names.button"
+          "name": "t:names.button",
+          "settings": {
+            "label": "Shop Now"
+          }
         },
-        "text_Footer" : {
+        "text_Footer": {
           "type": "textFooter",
-          "name": "t:names.footer"
+          "name": "t:names.footer",
+          "settings": {
+            "textFooter": "<p>SUSTAINABLE, ETHICALLY MADE CLOTHES IN SIZES XXS TO 6XL</p>"
+          }
         }
       },
       "block_order": [
@@ -49,11 +70,71 @@
         "button_H9gGift",
         "button_H9gShop",
         "text_Footer"
-      ],
+      ]
     },
     "product_list_rLMWmg": {
       "type": "product-list",
       "blocks": {
+        "static-header": {
+          "type": "_product-list-content",
+          "name": "t:names.header",
+          "static": true,
+          "settings": {
+            "content_direction": "row",
+            "vertical_on_mobile": false,
+            "horizontal_alignment": "space-between",
+            "vertical_alignment": "flex-end",
+            "align_baseline": true,
+            "horizontal_alignment_flex_direction_column": "flex-start",
+            "vertical_alignment_flex_direction_column": "center",
+            "gap": 12,
+            "width": "fill",
+            "custom_width": 100,
+            "width_mobile": "fill",
+            "custom_width_mobile": 100,
+            "height": "fit",
+            "custom_height": 100,
+            "inherit_color_scheme": true,
+            "color_scheme": "",
+            "background_media": "none",
+            "video_position": "cover",
+            "background_image_position": "cover",
+            "border": "none",
+            "border_width": 1,
+            "border_opacity": 100,
+            "border_radius": 0,
+            "padding-block-start": 0,
+            "padding-block-end": 0,
+            "padding-inline-start": 0,
+            "padding-inline-end": 0
+          },
+          "blocks": {
+            "product_list_text": {
+              "type": "_product-list-text",
+              "name": "t:names.collection_title",
+              "settings": {
+                "text": "<h3>{{ closest.collection.title }}</h3>",
+                "type_preset": "rte",
+                "font": "var(--font-body--family)",
+                "font_size": "",
+                "line_height": "normal",
+                "letter_spacing": "normal",
+                "case": "none",
+                "wrap": "pretty",
+                "width": "fit-content",
+                "max_width": "normal",
+                "alignment": "left",
+                "padding-block-start": 0,
+                "padding-block-end": 0,
+                "padding-inline-start": 0,
+                "padding-inline-end": 0
+              }
+            }
+          },
+          "block_order": [
+            "product_list_text"
+          ]
+        },
         "static-product-card": {
           "type": "_product-card",
           "static": true,
@@ -70,39 +151,14 @@
             "padding-inline-start": 0,
             "padding-inline-end": 0
           },
-          "blocks": {
-            "text_dTbFKh": {
-              "type": "text",
-              "name": "t:names.heading",
-              "settings": {
-                "text": "<h2>New arrivals</h2>",
-                "width": "fit-content",
-                "max_width": "normal",
-                "alignment": "left",
-                "type_preset": "h1",
-                "font": "var(--font-body--family)",
-                "font_size": "1rem",
-                "line_height": "normal",
-                "letter_spacing": "normal",
-                "case": "none",
-                "wrap": "pretty",
-                "color": "var(--color-foreground)",
-                "background": false,
-                "background_color": "#00000026",
-                "corner_radius": 0,
-                "padding-block-start": 0,
-                "padding-block-end": 0,
-                "padding-inline-start": 0,
-                "padding-inline-end": 0
-              },
-              "blocks": {}
-            }
-          },
-          "block_order": [
-            "product_list_text_iJt3jP"
-          ]
+          "blocks": {},
+          "block_order": []
         }
       },
+      "block_order": [
+        "static-header",
+        "static-product-card"
+      ],
       "name": "t:names.products_grid",
       "settings": {
         "collection": "frontpage",
